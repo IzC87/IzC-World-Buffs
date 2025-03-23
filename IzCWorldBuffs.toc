@@ -1,0 +1,13 @@
+## Interface: 11506
+
+## Title: IzCWorldBuffs
+## Author: IzC
+## Version: @project-version@
+## SavedVariables: IzCWorldBuffs_SavedVars, IzCBuffs
+
+## X-Curse-Project-ID: UNKNOWN
+
+IzCWorldBuffs.lua
+MinimapButton.lua
+Libs\LibDataBroker-1.1.lua
+Libs\LibDBIcon-1.0.lua
