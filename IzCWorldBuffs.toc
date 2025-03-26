@@ -5,7 +5,7 @@
 ## Version: @project-version@
 ## SavedVariables: IzCWorldBuffs_SavedVars, IzCBuffs
 
-## X-Curse-Project-ID: UNKNOWN
+## X-Curse-Project-ID: 1229492
 
 IzCWorldBuffs.lua
 Parser.lua
