@@ -116,7 +116,7 @@ function IzC_WB.Sender:OnCommReceived(prefix, payload, distribution, sender)
     local success, data = LibSerialize:Deserialize(payload)
     if not success then return end
 
-    print(prefix, payload, distribution, sender)
+    IzC_WB:PrintDebug(prefix.." - "..payload.." - "..distribution.." - "..sender)
 
     IzC_WB:AddBuff(data.Buff, data.Faction, data.Time, "Imported From: "..sender)
 
