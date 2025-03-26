@@ -7,7 +7,7 @@ function IzC_WB:RegisterMiniMap()
   
         local databroker = LDB:NewDataObject ("IzCWorldBuffs", {
             type = "data source",
-            icon = "inv_misc_monsterscales_14",
+            icon = "236396",
             text = "0",
         
             HotCornerIgnore = true,
