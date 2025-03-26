@@ -30,7 +30,7 @@ function IzC_WB:RegisterMiniMap()
             end,
 
             OnTooltipShow = function (tooltip)
-                tooltip:AddLine("|cFFFF00DEBuffs");
+                tooltip:AddLine("|cFFFFD700 World Buffs");
 
                 local buffs = IzC_WB:SortBuffsByTime();
                 local nextDay = time( { year = tonumber(date("%Y")), month = tonumber(date("%m")), day = tonumber(date("%d")) }) + 24 * 60 * 60;
