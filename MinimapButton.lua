@@ -15,18 +15,74 @@ function IzC_WB:RegisterMiniMap()
             OnClick = function (self, button)
         
                 if button == "LeftButton" then 
-                    -- IzC_WB.BrowserWindow:ToggleWindow()
+                    if IzC_WB.InputFrame:IsShown() then
+                        IzC_WB.InputFrame:Hide()
+                    else
+                        IzC_WB.InputFrame:Show()
+                    end
+                    -- for key,buff in pairs(IzCBuffs) do
+                    --     local dateString = date("%Y-%m-%d %H:%M", buff.Time)
+                    --     DEFAULT_CHAT_FRAME:AddMessage("|cFF9CD6DE"..buff.Buff.." - "..buff.Faction.." - "..dateString.."\n"..buff.RawPost.."\n");
+                    -- end
                 elseif button == "RightButton" then
                     Settings.OpenToCategory("IzC World Buffs")
                 end
-
             end,
 
             OnTooltipShow = function (tooltip)
+                tooltip:AddLine("|cFFFF00DEBuffs");
+
+                local buffs = IzC_WB:SortBuffsByTime();
+                local nextDay = time( { year = tonumber(date("%Y")), month = tonumber(date("%m")), day = tonumber(date("%d")) }) + 24 * 60 * 60;
+                local addLine = true;
+
+                for _,buff in ipairs(buffs) do
+                    -- Don't show buffs that have passed
+                    if buff.Time > time() - (5 * 60) then
+                        local dateString = date("%H:%M", buff.Time)
+                        if nextDay and buff.Time > nextDay then
+                            dateString = date("%A %d - %H:%M", buff.Time)
+                            if addLine then
+                                tooltip:AddLine("------------------------------");
+                                addLine = nil;
+                            end
+                        end
+
+                        local factionColor = "|cDEFF0006"
+                        if buff.Alliance == true then
+                            factionColor = "|c0000D6DE"
+                        end
+                        
+                        local sendBuffCheckerString = "";
+                        if (IzCWorldBuffs_SavedVars.IzC_WB_Tooltip_Debug == true) then
+                            sendBuffCheckerString = " "..tostring(buff.SendBuffChecker)
+                        end
+
+                        tooltip:AddLine(factionColor..buff.Buff.." - "..buff.Faction.." - "..dateString..sendBuffCheckerString);
+                    end
+                end
                 
-                -- tooltip:AddLine (IzC_WB.L["Loon Best In Slot"]);
-                -- tooltip:AddLine("|cFF9CD6DE Left Click Open Browser Window");
-                -- tooltip:AddLine("|cFF9CD6DE Right Click Open Settings");
+                if (IzCWorldBuffs_SavedVars.IzC_WB_Tooltip_Debug == true) then
+                    tooltip:AddLine("------------------------------");
+                    tooltip:AddLine("SendBuffChecker: "..tostring(IzC_WB.SendBuffChecker));
+
+                    local minutesElapsedSinceStart = ((time() - IzC_WB.StartTime) / 60);
+                    if (minutesElapsedSinceStart <= 0) then
+                        minutesElapsedSinceStart = 1;
+                    end
+
+                    tooltip:AddLine("MessagesSent: "..IzC_WB.MessagesSent);
+                    if (IzC_WB.MessagesSent > 0) then
+                        tooltip:AddLine("MessagesSent / Minute: "..tostring(IzC_WB.MessagesSent / minutesElapsedSinceStart));
+                        tooltip:AddLine("------------------------------");
+                    end
+
+                    tooltip:AddLine("MessagesReceived: "..IzC_WB.MessagesReceived);
+                    if (IzC_WB.MessagesReceived > 0) then
+                        tooltip:AddLine("MessagesReceived / Minute: "..tostring(IzC_WB.MessagesReceived / minutesElapsedSinceStart));
+                        tooltip:AddLine("------------------------------");
+                    end
+                end
             end,
         })
         
@@ -35,9 +91,7 @@ function IzC_WB:RegisterMiniMap()
         end
 
         IzC_WB:ShowHideMiniMap(IzCWorldBuffs_SavedVars.Minimap.hide);
-  
     end
-
   end
 
   function IzC_WB:ShowHideMiniMap(shouldHide)

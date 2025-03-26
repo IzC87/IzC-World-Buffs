@@ -28,6 +28,11 @@
         "ARMOR",
         "WEAPON",
         "CLASS_ICON_TCOORDS",
-        "message"
+        "message",
+        "DEFAULT",
+        "NEW",
+        "PlayerName",
+        "PARTY",
+        "GUILD"
     ]
 }

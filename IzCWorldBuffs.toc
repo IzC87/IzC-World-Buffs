@@ -8,6 +8,13 @@
 ## X-Curse-Project-ID: UNKNOWN
 
 IzCWorldBuffs.lua
+Parser.lua
+InputFrame.lua
+Communications.lua
 MinimapButton.lua
 Libs\LibDataBroker-1.1.lua
 Libs\LibDBIcon-1.0.lua
+Libs\AceAddon-3.0.lua
+Libs\AceComm-3.0.lua
+Libs\AceSerializer-3.0.lua
+Libs\ChatThrottleLib.lua
