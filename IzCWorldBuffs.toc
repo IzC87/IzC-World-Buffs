@@ -4,6 +4,7 @@
 ## Author: IzC
 ## Version: @project-version@
 ## SavedVariables: IzCWorldBuffs_SavedVars, IzCBuffs
+## SavedVariablesPerCharacter: IzCWorldBuffs_CharSettings
 
 ## X-Curse-Project-ID: 1229492
 

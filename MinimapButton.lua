@@ -31,6 +31,7 @@ function IzC_WB:RegisterMiniMap()
 
             OnTooltipShow = function (tooltip)
                 tooltip:AddLine("|cFFFFD700 World Buffs");
+                tooltip:AddLine("------------------------------");
 
                 local buffs = IzC_WB:SortBuffsByTime();
                 local nextDay = time( { year = tonumber(date("%Y")), month = tonumber(date("%m")), day = tonumber(date("%d")) }) + 24 * 60 * 60;
@@ -38,7 +39,7 @@ function IzC_WB:RegisterMiniMap()
 
                 for _,buff in ipairs(buffs) do
                     -- Don't show buffs that have passed
-                    if buff.Time > time() - (5 * 60) then
+                    if (IzC_WB:ShowBuff(buff) == true) then
                         local dateString = date("%H:%M", buff.Time)
                         if nextDay and buff.Time > nextDay then
                             dateString = date("%A %d - %H:%M", buff.Time)
@@ -92,17 +93,49 @@ function IzC_WB:RegisterMiniMap()
 
         IzC_WB:ShowHideMiniMap(IzCWorldBuffs_SavedVars.Minimap.hide);
     end
-  end
+end
 
-  function IzC_WB:ShowHideMiniMap(shouldHide)
+function IzC_WB:ShowBuff(buff)
+    print("---------")
+    -- print(1)
+    if (buff.Time < time() - (5 * 60)) then
+        -- print(2)
+        return false;
+    end
+
+    print(tostring(IzCWorldBuffs_CharSettings.IzC_WB_IgnoreRendBuff), tostring(buff.Buff))
+    if (IzCWorldBuffs_CharSettings.IzC_WB_IgnoreRendBuff == true and buff.Buff == "RendBuff") then
+        print(3)
+        return false;
+    end
+
+    print(tostring(IzCWorldBuffs_CharSettings.IzC_WB_IgnoreOnyxia), tostring(buff.Buff))
+    if (IzCWorldBuffs_CharSettings.IzC_WB_IgnoreOnyxia == true and buff.Buff == "Onyxia") then
+        print(tostring(buff.Alliance), tostring(UnitFactionGroup("player")))
+        if (buff.Alliance == true and UnitFactionGroup("player") == "Horde") then
+            print(5)
+            return false;
+        end
+        print(tostring(buff.Alliance), tostring(UnitFactionGroup("player")))
+        if (buff.Alliance == false and UnitFactionGroup("player") == "Alliance") then
+            print(6)
+            return false;
+        end
+    end
+
+    print(7)
+    return true;
+end
+
+function IzC_WB:ShowHideMiniMap(shouldHide)
     IzCWorldBuffs_SavedVars.Minimap.hide = shouldHide;
     if shouldHide then
         IzC_WB_Button:Hide("IzCWorldBuffs");
     else
         IzC_WB_Button:Show("IzCWorldBuffs");
     end
+end
 
-    function IzC_WB:ShowHideTooltip(shouldHide)
-        IzCWorldBuffs_SavedVars.ShowTooltip = shouldHide;
-    end
+function IzC_WB:ShowHideTooltip(shouldHide)
+    IzCWorldBuffs_SavedVars.ShowTooltip = shouldHide;
 end

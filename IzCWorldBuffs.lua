@@ -16,7 +16,7 @@ IzC_WB:RegisterEvent("PLAYER_TARGET_CHANGED")
 IzC_WB:RegisterEvent("PLAYER_LOGOUT")
 
 
-
+IzCWorldBuffs_CharSettings = {}
 IzCWorldBuffs_SavedVars = {}
 IzCBuffs = {}
 
@@ -47,23 +47,14 @@ function IzC_WB:EventHandler(event, arg1, ...)
         print(event);
         if (arg1 == addonName) then
 
+            IzCWorldBuffs_CharSettings = setmetatable(IzCWorldBuffs_CharSettings or {}, { __index = IzCWorldBuffs_CharSettings_Defaults })
             IzCWorldBuffs_SavedVars = setmetatable(IzCWorldBuffs_SavedVars or {}, { __index = IzCWorldBuffs_Defaults })
             IzCBuffs = setmetatable(IzCBuffs or {}, { __index = {} })
-
-            -- IzCBuffs = {}
 
 
             IzC_WB:TryUnregisterEvent("ADDON_LOADED");
             IzC_WB:CreateSettings();
             IzC_WB:RegisterMiniMap();
-
-
---             local input = [[<Titans> Center — Yesterday at 01:08
--- <Titans> 
--- :Titans_Ony: :alliance: -  27/03/2025 - 19:00 ST
--- @Onyxia Alliance]]
-
-            -- IzC_WB:ProcessRawInput(input);
 
             return;
         end
@@ -107,6 +98,21 @@ function IzC_WB:CreateSettings()
     -- local MacrosCategory, _ = Settings.RegisterVerticalLayoutSubcategory(category, "Macros");
     local debugCategory, debugLayout = Settings.RegisterVerticalLayoutSubcategory(category, "Debug");
 
+    local function CreatePerCharacterCheckBox(variable, name, tooltip, category, defaultValue)
+        local function GetValue()
+            return IzCWorldBuffs_CharSettings[variable] or defaultValue
+        end
+
+        local function SetValue(value)
+            IzC_WB:PrintDebug("Setting "..variable.." changed to: "..tostring(value));
+            IzCWorldBuffs_CharSettings[variable] = value;
+        end
+
+        local setting = Settings.RegisterProxySetting(category, variable, type(false), name, defaultValue, GetValue, SetValue)
+
+        Settings.CreateCheckbox(category, setting, tooltip)
+    end
+
     local function CreateCheckBox(variable, name, tooltip, category, defaultValue)
         local function GetValue()
             return IzCWorldBuffs_SavedVars[variable] or defaultValue
@@ -131,15 +137,13 @@ function IzC_WB:CreateSettings()
         button2 = CANCEL,
         OnAccept = function(self)
             IzCBuffs = {}
-        end,
-        hasEditBox = 1,
+        end
     }
 
     do
-        CreateCheckBox("IzC_WB_Communication", "Use Communication", "Whether or not we should listen to or send buffs to other people", category, true)
-
-        -- CreateCheckBox("IzC_WB_SendToParty", "Share buffs with Party", "Share buffs with Party members", category, true)
-        -- CreateCheckBox("IzC_WB_SendToGuild", "Share buffs with Guild", "Share buffs with Guild members", category, true)
+        CreateCheckBox("IzC_WB_Communication", "Use Communication", "Whether or not we should listen to or send buffs to other people", category, false)
+        CreatePerCharacterCheckBox("IzC_WB_IgnoreRendBuff", "Ignore Rend Buff", "Ignore Rend Buff", category, false)
+        CreatePerCharacterCheckBox("IzC_WB_IgnoreOnyxia", "Ignore other faction Onyxia", "Ignore onyxia for the other faction than yours", category, false)
 
         CreateCheckBox("IzC_WB_Tooltip_Debug", "Tooltip Debug Info", "Show some debug info in buff Tooltip", debugCategory, false)
         CreateCheckBox("IzC_WB_Debug", "Debug Mode", "Print debug statements?", debugCategory, false)
@@ -158,11 +162,14 @@ end
 
 IzCWorldBuffs_Defaults = {
     ["IzC_WB_Communication"] = true,
-    -- ["IzC_WB_SendToGuild"] = true,
-    -- ["IzC_WB_SendToParty"] = true,
     ["IzC_WB_Tooltip_Debug"] = false,
     ["IzC_WB_Debug"] = false,
     ["Buffs"] = {},
     ["Minimap"] = {},
     ["ShowTooltip"] = true
+}
+
+IzCWorldBuffs_CharSettings_Defaults = {
+    ["IzC_WB_IgnoreRendBuff"] = false,
+    ["IzC_WB_IgnoreOnyxia"] = true
 }
