@@ -49,8 +49,8 @@ function IzC_WB.Sender:ShouldSendBuff(buff)
 end
 
 function IzC_WB.Sender:SendBuff(buff)
-    if IzCWorldBuffs_SavedVars.IzC_WB_Communication ~= true then
-        IzC_WB:PrintDebug("Tried to send a buff but communications is turned off.");
+    if IzCWorldBuffs_SavedVars.IzC_WB_SendBuffs ~= true then
+        IzC_WB:PrintDebug("Tried to send a buff but sending is turned off.");
         return;
     end
 
@@ -110,7 +110,7 @@ function IzC_WB.Sender:Transmit(data, channel)
 end
 
 function IzC_WB.Sender:OnCommReceived(prefix, payload, distribution, sender)
-    if (sender == UnitName("player") or IzCWorldBuffs_SavedVars.IzC_WB_Communication ~= true) then
+    if (sender == UnitName("player") or IzCWorldBuffs_SavedVars.IzC_WB_ReceiveBuffs ~= true) then
         return;
     end
 
@@ -134,11 +134,8 @@ function IzC_WB.Sender:OnCommReceived(prefix, payload, distribution, sender)
     -- end
 end
 
-
-
-
 function IzC_WB.Sender:OnEnable()
-    if IzCWorldBuffs_SavedVars.IzC_WB_Communication ~= true then
+    if IzCWorldBuffs_SavedVars.IzC_WB_ReceiveBuffs ~= true then
         return;
     end
     
