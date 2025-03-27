@@ -33,6 +33,8 @@
         "NEW",
         "PlayerName",
         "PARTY",
-        "GUILD"
+        "GUILD",
+        "PanelTemplates_SetNumTabs",
+        "PanelTemplates_SetTab"
     ]
 }

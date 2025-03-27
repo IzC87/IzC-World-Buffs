@@ -84,7 +84,7 @@ function IzC_WB:RegisterMiniMap()
         })
         
         if (databroker and not IzC_WB_Button:IsRegistered ("IzCWorldBuffs")) then
-            IzC_WB_Button:Register ("IzCWorldBuffs", databroker, IzCWorldBuffs_SavedVars.Minimap)
+            IzC_WB_Button:Register("IzCWorldBuffs", databroker, IzCWorldBuffs_SavedVars.Minimap)
         end
 
         IzC_WB:ShowHideMiniMap(IzCWorldBuffs_SavedVars.Minimap.hide);

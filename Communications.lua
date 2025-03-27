@@ -88,10 +88,14 @@ function IzC_WB.Sender:SendBuff(buff)
     local target = sendTo[ math.random(#sendTo) ];
 
     local buffToSend = {
-        Buff = buff.Buff,
-        Faction = buff.Faction,
-        Time = buff.Time
+        B = buff.Buff,
+        T = buff.Time
     };
+    if (buff.Alliance == true) then
+        buffToSend.A = 1
+    else
+        buffToSend.A = 0
+    end
     
     buff.SendBuffChecker = not IzC_WB.SendBuffChecker;
 
@@ -118,7 +122,12 @@ function IzC_WB.Sender:OnCommReceived(prefix, payload, distribution, sender)
 
     IzC_WB:PrintDebug(prefix.." - "..payload.." - "..distribution.." - "..sender)
 
-    IzC_WB:AddBuff(data.Buff, data.Faction, data.Time, "Imported From: "..sender)
+    local isAlliance = false;
+    if (data.A == 1) then
+        isAlliance = true;
+    end
+
+    IzC_WB:AddBuff(data.B, isAlliance, data.T, "Imported From: "..sender)
 
     -- for key,buff in pairs(data) do
         -- print(key, buff)

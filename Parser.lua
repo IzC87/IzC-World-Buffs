@@ -6,7 +6,7 @@ function IzC_WB:ParsePost(post)
 
     local buffDate = nil
     local lastBuff = nil
-    local lastFaction = nil
+    local isAlliance = nil
 
     local lines = {}
     local getDate = false
@@ -16,8 +16,8 @@ function IzC_WB:ParsePost(post)
             lastBuff = IzC_WB:GetBuff(line, nil)
         end
         -- PreAdd Faction, this is to cover cases where the post is made with the @Faction last.
-        if (not lastFaction) then
-            lastFaction = IzC_WB:GetFaction(line, nil)
+        if (isAlliance == nil) then
+            isAlliance = IzC_WB:IsAlliance(line, nil)
         end
         -- PreAdd BuffDate, this is to cover cases where the post is made with the @BuffDate last.
         if (getDate == true and not buffDate) then
@@ -32,10 +32,10 @@ function IzC_WB:ParsePost(post)
         local line = lines[i]
 
         lastBuff = IzC_WB:GetBuff(line, lastBuff);
-        lastFaction = IzC_WB:GetFaction(line, lastFaction);
+        isAlliance = IzC_WB:IsAlliance(line, isAlliance)
         buffDate = IzC_WB:GetDate(line, buffDate);
 
-        local success = IzC_WB:CheckLineForTimeAndAddToTable(line, lastBuff, lastFaction, buffDate, post)
+        local success = IzC_WB:CheckLineForTimeAndAddToTable(line, lastBuff, isAlliance, buffDate, post)
         if (buffAdded == false) then
             buffAdded = success;
         end
@@ -54,7 +54,7 @@ function IzC_WB:ParsePost(post)
         if (buffDate) then
             for i = #lines, 2, -1 do
                 local line = lines[i]
-                local success = IzC_WB:CheckLineForTimeAndAddToTable(line, lastBuff, lastFaction, buffDate, post)
+                local success = IzC_WB:CheckLineForTimeAndAddToTable(line, lastBuff, isAlliance, buffDate, post)
                 if (buffAdded == false) then
                     buffAdded = success;
                 end
@@ -89,13 +89,17 @@ function IzC_WB:GetDate(line, lastDate)
     return lastDate
 end
 
-function IzC_WB:GetFaction(line, lastFaction)
-    -- local faction = line:match("(%f[%a]Alliance%f[%A])") or line:match("(%f[%a]Horde%f[%A])") or line:match("(%f[%a]RendBuff%f[%A])")
-    local faction = line:match("(%f[%a]Alliance%f[%A])") or line:match("(%f[%a]Horde%f[%A])") or line:match("(%f[%a]RendBuff%f[%A])")
-    if faction then
-        return faction;
+function IzC_WB:IsAlliance(line, isAlliance)
+    if (line:match("(%f[%a]Alliance%f[%A])")) then
+        return true;
     end
-    return lastFaction;
+    if (line:match("(%f[%a]Horde%f[%A])")) then
+        return false;
+    end
+    if (line:match("(%f[%a]RendBuff%f[%A])")) then
+        return false;
+    end
+    return isAlliance;
 end
 
 function IzC_WB:GetBuff(line, lastBuff)
@@ -106,16 +110,15 @@ function IzC_WB:GetBuff(line, lastBuff)
     return lastBuff;
 end
 
-function IzC_WB:CheckLineForTimeAndAddToTable(line, buffTag, faction, buffDate, rawPost)
+function IzC_WB:CheckLineForTimeAndAddToTable(line, buffTag, isAlliance, buffDate, rawPost)
     local result = false;
 
     if not buffTag then
         IzC_WB:PrintDebug("No BuffTag Found: \n"..rawPost);
         return result;
     end
-    if not faction then
+    if isAlliance == nil then
         IzC_WB:PrintDebug("No Faction Found: \n"..rawPost);
-        IzC_WB:PrintDebug(tostring(faction));
         return result;
     end
     if not buffDate then
@@ -131,19 +134,19 @@ function IzC_WB:CheckLineForTimeAndAddToTable(line, buffTag, faction, buffDate, 
         if nextChar == "" or not nextChar:match("^[%.:]%d%d%d%d$") then
             timeStr = timeStr:gsub("%.", ":")
             local hour, minute = strsplit(":", timeStr, 2)
-            result = IzC_WB:TryAddBuff(buffTag, faction, buffDate, { hour = hour, minute = minute}, rawPost)
+            result = IzC_WB:TryAddBuff(buffTag, isAlliance, buffDate, { hour = hour, minute = minute}, rawPost)
         end
     end
     for pre, timeStr in line:gmatch("([^%d/%.%-])(%d%d%d%d)%f[%D]") do
         if tonumber(timeStr) < 2400 then
-            result = IzC_WB:TryAddBuff(buffTag, faction, buffDate, { hour = timeStr:sub(1, 2), minute = timeStr:sub(3, 4)}, rawPost)
+            result = IzC_WB:TryAddBuff(buffTag, isAlliance, buffDate, { hour = timeStr:sub(1, 2), minute = timeStr:sub(3, 4)}, rawPost)
         end
     end
 
     return result;
 end
 
-function IzC_WB:TryAddBuff(buffTag, faction, buffDate, buffTime, rawPost)
+function IzC_WB:TryAddBuff(buffTag, isAlliance, buffDate, buffTime, rawPost)
     if (not buffDate.year or not buffDate.month or not buffDate.day) then
         IzC_WB:PrintDebug("Date is wrong!: \n"..tostring(buffDate.year).."/"..tostring(buffDate.month).."/"..tostring(buffDate.day));
         -- print("Date is wrong!: \n"..tostring(buffDate.year).."/"..tostring(buffDate.month).."/"..tostring(buffDate.day));
@@ -159,7 +162,7 @@ function IzC_WB:TryAddBuff(buffTag, faction, buffDate, buffTime, rawPost)
             min = tonumber(buffTime.minute),
         })
 
-    local buffAdded = IzC_WB:AddBuff(buffTag, faction, timeStamp, rawPost);
+    local buffAdded = IzC_WB:AddBuff(buffTag, isAlliance, timeStamp, rawPost);
 
     if buffAdded then
         IzC_WB.Sender:SendBuff(buffAdded)
@@ -168,14 +171,13 @@ function IzC_WB:TryAddBuff(buffTag, faction, buffDate, buffTime, rawPost)
     return true;
 end
 
-function IzC_WB:AddBuff(buffTag, faction, timeStamp, rawPost)
+function IzC_WB:AddBuff(buffTag, isAlliance, timeStamp, rawPost)
     if timeStamp < IzC_WB:GetDateShiftedByDay(-3) then
         IzC_WB:PrintDebug(buffTag.." too old:")
         IzC_WB:PrintDebug("rawPost")
         return nil;
     end
 
-    local isAlliance = (faction == "Alliance")
     local factionString = "Horde";
     if isAlliance then
         factionString = "Alliance"
@@ -199,7 +201,21 @@ function IzC_WB:AddBuff(buffTag, faction, timeStamp, rawPost)
 
     IzCBuffs[key] = buffToAdd;
 
+    IzC_WB:AnnounceNewBuff(buffToAdd)
+
     return buffToAdd;
+end
+
+function IzC_WB:AnnounceNewBuff(buff)
+    if (IzCWorldBuffs_SavedVars.IzC_WB_AnnounceNewBuff == false) then
+        return;
+    end
+
+    if (IzC_WB:ShowBuff(buff) == false) then
+        return;
+    end
+
+    print("New buff: "..buff.Buff.." - "..buff.Faction.." - "..date(nil, buff.Time))
 end
 
 function IzC_WB:SortBuffsByTime()

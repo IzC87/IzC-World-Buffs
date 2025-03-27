@@ -140,6 +140,7 @@ function IzC_WB:CreateSettings()
     }
 
     do
+        CreateCheckBox("IzC_WB_AnnounceNewBuff", "Announce new buff", "Whether or not we should make an announcement when a new buff is added", category, false)
         CreateCheckBox("IzC_WB_Communication", "Use Communication", "Whether or not we should listen to or send buffs to other people", category, false)
         CreatePerCharacterCheckBox("IzC_WB_IgnoreRendBuff", "Ignore Rend Buff", "Ignore Rend Buff", category, false)
         CreatePerCharacterCheckBox("IzC_WB_IgnoreOnyxia", "Ignore other faction Onyxia", "Ignore onyxia for the other faction than yours", category, false)
@@ -162,6 +163,7 @@ end
 IzCWorldBuffs_Defaults = {
     ["IzC_WB_Communication"] = true,
     ["IzC_WB_Tooltip_Debug"] = false,
+    ["IzC_WB_AnnounceNewBuff"] = true,
     ["IzC_WB_Debug"] = false,
     ["Buffs"] = {},
     ["Minimap"] = {},

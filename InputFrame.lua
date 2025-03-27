@@ -1,7 +1,7 @@
 -- Globals Section
 local addonName, L = ...;
 
-IzC_WB.InputFrame = CreateFrame("Frame", "MyInputFrame", UIParent, "BackdropTemplate")
+IzC_WB.InputFrame = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
 IzC_WB.InputFrame:SetSize(500, 400)
 IzC_WB.InputFrame:SetPoint("CENTER")
 IzC_WB.InputFrame:SetBackdrop({
@@ -22,10 +22,10 @@ title:SetPoint("TOP", 0, -16)
 title:SetText("Paste your input")
 
 -- ScrollFrame
-local scrollFrame = CreateFrame("ScrollFrame", "MyInputScrollFrame", IzC_WB.InputFrame, "UIPanelScrollFrameTemplate")
+local scrollFrame = CreateFrame("ScrollFrame", nil, IzC_WB.InputFrame, "UIPanelScrollFrameTemplate")
 scrollFrame:SetPoint("TOPLEFT", 16, -50)
 scrollFrame:SetPoint("BOTTOMRIGHT", -30, 50)
-scrollFrame:SetHeight(800)
+scrollFrame:SetHeight(350)
 
 -- EditBox inside ScrollFrame
 local IzC_WB_editBox = CreateFrame("EditBox", nil, scrollFrame, "BackdropTemplate")
@@ -44,7 +44,7 @@ IzC_WB_editBox:SetScript("OnEscapePressed", function() IzC_WB_editBox:ClearFocus
 IzC_WB_editBox:SetScript("OnEnterPressed", function() IzC_WB_editBox:Insert("\n") end)
 IzC_WB_editBox:SetPoint("TOPLEFT")
 IzC_WB_editBox:SetPoint("TOPRIGHT")
-IzC_WB_editBox:SetHeight(1200)
+IzC_WB_editBox:SetHeight(300)
 
 scrollFrame:SetScrollChild(IzC_WB_editBox)
 
@@ -67,3 +67,9 @@ parseButton:SetScript("OnClick", function()
 end)
 
 IzC_WB.InputFrame:Hide()
+
+
+-- PanelTemplates_SetNumTabs(myTabContainerFrame, 2);  -- 2 because there are 2 frames total.
+--  PanelTemplates_SetTab(myTabContainerFrame, 1);      -- 1 because we want tab 1 selected.
+--  myTabPage1:Show();  -- Show page 1.
+--  myTabPage2:Hide();  -- Hide all other pages (in this case only one).
