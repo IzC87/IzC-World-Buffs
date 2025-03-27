@@ -44,7 +44,6 @@ function IzC_WB:EventHandler(event, arg1, ...)
     IzC_WB:PrintDebug(event)
 
     if (event == "ADDON_LOADED") then
-        print(event);
         if (arg1 == addonName) then
 
             IzCWorldBuffs_CharSettings = setmetatable(IzCWorldBuffs_CharSettings or {}, { __index = IzCWorldBuffs_CharSettings_Defaults })
