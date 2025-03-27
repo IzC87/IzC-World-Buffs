@@ -21,7 +21,7 @@ function IzC_WB:RegisterMiniMap()
                         IzC_WB.InputFrame:Show()
                     end
                 elseif button == "RightButton" then
-                    Settings.OpenToCategory("IzC World Buffs")
+                    Settings.OpenToCategory(IzC_WB.Category)
                 end
             end,
 

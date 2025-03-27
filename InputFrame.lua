@@ -40,7 +40,7 @@ IzC_WB_editBox:SetMultiLine(true)
 IzC_WB_editBox:SetFontObject(ChatFontNormal)
 IzC_WB_editBox:SetWidth(440)
 IzC_WB_editBox:SetAutoFocus(true)
-IzC_WB_editBox:SetScript("OnEscapePressed", function() IzC_WB_editBox:ClearFocus() end)
+IzC_WB_editBox:SetScript("OnEscapePressed", function() IzC_WB_editBox:ClearFocus();IzC_WB_editBox:SetText("");IzC_WB.InputFrame:Hide(); end)
 IzC_WB_editBox:SetScript("OnEnterPressed", function() IzC_WB_editBox:Insert("\n") end)
 IzC_WB_editBox:SetPoint("TOPLEFT")
 IzC_WB_editBox:SetPoint("TOPRIGHT")
@@ -67,9 +67,3 @@ parseButton:SetScript("OnClick", function()
 end)
 
 IzC_WB.InputFrame:Hide()
-
-
--- PanelTemplates_SetNumTabs(myTabContainerFrame, 2);  -- 2 because there are 2 frames total.
---  PanelTemplates_SetTab(myTabContainerFrame, 1);      -- 1 because we want tab 1 selected.
---  myTabPage1:Show();  -- Show page 1.
---  myTabPage2:Hide();  -- Hide all other pages (in this case only one).

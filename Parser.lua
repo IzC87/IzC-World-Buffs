@@ -70,7 +70,7 @@ function IzC_WB:ParsePost(post)
         print("-----------------");
         print(post);
         print(lastBuff);
-        print(lastFaction);
+        print("isAlliance: "..tostring(isAlliance));
         print(buffDate);
     end
 end

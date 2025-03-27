@@ -91,11 +91,9 @@ end
 --      Options     --
 ----------------------
 function IzC_WB:CreateSettings()
-    local category, layout = Settings.RegisterVerticalLayoutCategory("IzC World Buffs")
+    IzC_WB.Category, _ = Settings.RegisterVerticalLayoutCategory("IzC World Buffs")
 
-    -- local MainCategory, _ = Settings.RegisterVerticalLayoutSubcategory(category, "Prio");
-    -- local MacrosCategory, _ = Settings.RegisterVerticalLayoutSubcategory(category, "Macros");
-    local debugCategory, debugLayout = Settings.RegisterVerticalLayoutSubcategory(category, "Debug");
+    local debugCategory, debugLayout = Settings.RegisterVerticalLayoutSubcategory(IzC_WB.Category, "Debug");
 
     local function CreatePerCharacterCheckBox(variable, name, tooltip, category, defaultValue)
         local function GetValue()
@@ -140,13 +138,13 @@ function IzC_WB:CreateSettings()
     }
 
     do
-        CreateCheckBox("IzC_WB_AnnounceNewBuff", "Announce new buff", "Whether or not we should make an announcement when a new buff is added", category, false)
+        CreateCheckBox("IzC_WB_AnnounceNewBuff", "Announce new buff", "Whether or not we should make an announcement when a new buff is added", IzC_WB.Category, false)
         
-        CreateCheckBox("IzC_WB_SendBuffs", "Send Buffs To Other People", "Whether or not we should send buffs to other people", category, false)
-        CreateCheckBox("IzC_WB_ReceiveBuffs", "Receive Buffs From Other People", "Whether or not we should listen to buffs from other people", category, false)
+        CreateCheckBox("IzC_WB_SendBuffs", "Send Buffs To Other People", "Whether or not we should send buffs to other people", IzC_WB.Category, false)
+        CreateCheckBox("IzC_WB_ReceiveBuffs", "Receive Buffs From Other People", "Whether or not we should listen to buffs from other people", IzC_WB.Category, false)
 
-        CreatePerCharacterCheckBox("IzC_WB_IgnoreRendBuff", "Ignore Rend Buff", "Ignore Rend Buff", category, false)
-        CreatePerCharacterCheckBox("IzC_WB_IgnoreOnyxia", "Ignore other faction Onyxia", "Ignore onyxia for the other faction than yours", category, false)
+        CreatePerCharacterCheckBox("IzC_WB_IgnoreRendBuff", "Ignore Rend Buff", "Ignore Rend Buff", IzC_WB.Category, false)
+        CreatePerCharacterCheckBox("IzC_WB_IgnoreOnyxia", "Ignore other faction Onyxia", "Ignore onyxia for the other faction than yours", IzC_WB.Category, false)
 
         CreateCheckBox("IzC_WB_Tooltip_Debug", "Tooltip Debug Info", "Show some debug info in buff Tooltip", debugCategory, false)
         CreateCheckBox("IzC_WB_Debug", "Debug Mode", "Print debug statements?", debugCategory, false)
@@ -160,7 +158,7 @@ function IzC_WB:CreateSettings()
             debugLayout:AddInitializer(initializer);
         end
     end
-    Settings.RegisterAddOnCategory(category)
+    Settings.RegisterAddOnCategory(IzC_WB.Category)
 end
 
 IzCWorldBuffs_Defaults = {
