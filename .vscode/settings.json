@@ -35,6 +35,7 @@
         "PARTY",
         "GUILD",
         "PanelTemplates_SetNumTabs",
-        "PanelTemplates_SetTab"
+        "PanelTemplates_SetTab",
+        "UIErrorsFrame"
     ]
 }

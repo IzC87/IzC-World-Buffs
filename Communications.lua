@@ -17,6 +17,11 @@ IzC_WB.ReceiveRegistered = false;
 IzC_WB.SendRegistered = false;
 
 function IzC_WB.Sender:TrySend()
+    if (IzC_WB.LastMessageThrottleTime > time()) then
+        IzC_WB:PrintDebug("Tried to send a buff but throttle timer hasn't expired");
+        return;
+    end
+    
     for key,buff in pairs(IzCBuffs) do
         if IzC_WB.Sender:ShouldSendBuff(buff) == true then
             IzC_WB:PrintDebug("Trying to send buff: "..key);

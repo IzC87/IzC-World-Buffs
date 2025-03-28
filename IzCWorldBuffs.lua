@@ -13,8 +13,9 @@ IzC_WB:RegisterEvent("PLAYER_REGEN_ENABLED");
 IzCWorldBuffs_CharSettings = {}
 IzCWorldBuffs_SavedVars = {}
 IzCBuffs = {}
-IzC_WB.OnUpdateThrottleWaiter = 7
+IzC_WB.OnUpdateThrottleWaiter = 5
 IzC_WB.OnUpdateThrottleTime = time() + IzC_WB.OnUpdateThrottleWaiter
+IzC_WB.OnUpdateIndex = 1;
 
 function IzC_WB:ClearOldBuffs()
     local oldestBuffTime = IzC_WB:GetDateShiftedByDay(-1);
@@ -50,7 +51,8 @@ function IzC_WB:EventHandler(event, arg1, ...)
             IzC_WB:TryUnregisterEvent("ADDON_LOADED");
             IzC_WB:CreateSettings();
             IzC_WB:RegisterMiniMap();
-            IzC_WB:RegisterOnUpdate()
+            IzC_WB:RegisterOnUpdate();
+            IzC_WB:CheckAnnouncementOn();
             return;
         end
     elseif (event == "PLAYER_LOGOUT") then
@@ -99,16 +101,24 @@ function IzC_WB:OnUpdate()
     if (IzC_WB.OnUpdateThrottleTime > time()) then
         return;
     end
-
     IzC_WB.OnUpdateThrottleTime = time() + IzC_WB.OnUpdateThrottleWaiter
 
     if (UnitAffectingCombat("player")) then
         IzC_WB:UnRegisterOnUpdate();
         return;
     end
-
-    if IzCWorldBuffs_SavedVars.IzC_WB_SendBuffs == true then
+    
+    if IzCWorldBuffs_SavedVars.IzC_WB_SendBuffs == true and IzC_WB.OnUpdateIndex == 1 then
         IzC_WB.Sender:TrySend();
+    end
+
+    if IzC_WB.OnUpdateIndex == 2 then
+        IzC_WB:PreAnnounceBuffs();
+    end
+
+    IzC_WB.OnUpdateIndex = IzC_WB.OnUpdateIndex + 1;
+    if (IzC_WB.OnUpdateIndex > 2) then
+        IzC_WB.OnUpdateIndex = 1;
     end
 end
 
@@ -121,6 +131,7 @@ end
 function IzC_WB:CreateSettings()
     IzC_WB.Category, _ = Settings.RegisterVerticalLayoutCategory("IzC World Buffs")
 
+    local announceCategory, announceLayout = Settings.RegisterVerticalLayoutSubcategory(IzC_WB.Category, "Announcements");
     local debugCategory, debugLayout = Settings.RegisterVerticalLayoutSubcategory(IzC_WB.Category, "Debug");
 
     local function CreatePerCharacterCheckBox(variable, name, tooltip, category, defaultValue)
@@ -149,6 +160,9 @@ function IzC_WB:CreateSettings()
             if (variable == "IzC_WB_ReceiveBuffs") then
                 IzC_WB.Sender:TryRegisterCom()
             end
+            if (variable:find("^IzC_WB_AnnounceBuff")) then
+                IzC_WB:CheckAnnouncementOn();
+            end
         end
 
         local setting = Settings.RegisterProxySetting(category, variable, type(false), name, defaultValue, GetValue, SetValue)
@@ -166,14 +180,20 @@ function IzC_WB:CreateSettings()
     }
 
     do
-        CreateCheckBox("IzC_WB_AnnounceNewBuff", "Announce new buff", "Whether or not we should make an announcement when a new buff is added", IzC_WB.Category, false)
-        
         CreateCheckBox("IzC_WB_SendBuffs", "Send Buffs To Other People", "Whether or not we should send buffs to other people", IzC_WB.Category, false)
         CreateCheckBox("IzC_WB_ReceiveBuffs", "Receive Buffs From Other People", "Whether or not we should listen to buffs from other people", IzC_WB.Category, false)
 
         CreatePerCharacterCheckBox("IzC_WB_IgnoreRendBuff", "Ignore Rend Buff", "Ignore Rend Buff", IzC_WB.Category, false)
         CreatePerCharacterCheckBox("IzC_WB_IgnoreOnyxia", "Ignore other faction Onyxia", "Ignore onyxia for the other faction than yours", IzC_WB.Category, false)
 
+        CreateCheckBox("IzC_WB_AnnounceNewBuff", "Announce new buff", "Whether or not we should make an announcement when a new buff is added", announceCategory, false)
+        CreateCheckBox("IzC_WB_AnnounceBuff1", "Pre-Announce buff - 1 minute", "Announce a buff that is coming in one minute", announceCategory, false)
+        CreateCheckBox("IzC_WB_AnnounceBuff2", "Pre-Announce buff - 2 minutes", "Announce a buff that is coming in two minutes", announceCategory, false)
+        CreateCheckBox("IzC_WB_AnnounceBuff5", "Pre-Announce buff - 5 minutes", "Announce a buff that is coming in five minutes", announceCategory, false)
+        CreateCheckBox("IzC_WB_AnnounceBuff10", "Pre-Announce buff - 10 minutes", "Announce a buff that is coming in ten minutes", announceCategory, false)
+        CreateCheckBox("IzC_WB_AnnounceBuff15", "Pre-Announce buff - 15 minutes", "Announce a buff that is coming in fifteen minutes", announceCategory, false)
+        CreateCheckBox("IzC_WB_AnnounceBuff20", "Pre-Announce buff - 20 minutes", "Announce a buff that is coming in twenty minutes", announceCategory, false)
+        
         CreateCheckBox("IzC_WB_Tooltip_Debug", "Tooltip Debug Info", "Show some debug info in buff Tooltip", debugCategory, false)
         CreateCheckBox("IzC_WB_Debug", "Debug Mode", "Print debug statements?", debugCategory, false)
 
@@ -194,6 +214,12 @@ IzCWorldBuffs_Defaults = {
     ["IzC_WB_ReceiveBuffs"] = true,
     ["IzC_WB_Tooltip_Debug"] = false,
     ["IzC_WB_AnnounceNewBuff"] = true,
+    ["IzC_WB_AnnounceBuff1"] = false,
+    ["IzC_WB_AnnounceBuff2"] = false,
+    ["IzC_WB_AnnounceBuff5"] = false,
+    ["IzC_WB_AnnounceBuff10"] = false,
+    ["IzC_WB_AnnounceBuff15"] = false,
+    ["IzC_WB_AnnounceBuff20"] = false,
     ["IzC_WB_Debug"] = false,
     ["Buffs"] = {},
     ["Minimap"] = {},
