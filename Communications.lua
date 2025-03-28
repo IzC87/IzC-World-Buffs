@@ -21,7 +21,7 @@ function IzC_WB.Sender:TrySend()
         IzC_WB:PrintDebug("Tried to send a buff but throttle timer hasn't expired");
         return;
     end
-    
+
     for key,buff in pairs(IzCBuffs) do
         if IzC_WB.Sender:ShouldSendBuff(buff) == true then
             IzC_WB:PrintDebug("Trying to send buff: "..key);
@@ -119,6 +119,10 @@ function IzC_WB.Sender:OnCommReceived(prefix, payload, distribution, sender)
     if not success then return end
 
     IzC_WB:PrintDebug(prefix.." - "..payload.." - "..distribution.." - "..sender)
+
+    if (not data.T or not data.A or not data.B) then
+        IzC_WB:PrintDebug(sender.." is using an old version. Disregarding msg")
+    end
 
     local isAlliance = false;
     if (data.A == 1) then
