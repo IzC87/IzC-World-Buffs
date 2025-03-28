@@ -6,23 +6,17 @@ local LibSerialize = LibStub("AceSerializer-3.0")
 
 IzC_WB.AddonMessagePrefix = "IzC_WB";
 
-IzC_WB.MessageThrottleTime = 12;
+IzC_WB.MessageThrottleTime = 8;
 IzC_WB.LastMessageThrottleTime = time() - IzC_WB.MessageThrottleTime;
 IzC_WB.SendBuffChecker = true;
 
 IzC_WB.MessagesSent = 0;
 IzC_WB.MessagesReceived = 0;
 IzC_WB.StartTime = time();
+IzC_WB.ReceiveRegistered = false;
+IzC_WB.SendRegistered = false;
 
 function IzC_WB.Sender:TrySend()
-    if (IzC_WB.LastMessageThrottleTime > time()) then
-        IzC_WB:PrintDebug("Tried to send a buff but throttle timer hasn't expired");
-        return;
-    end
-    if (UnitAffectingCombat("player")) then
-        IzC_WB:PrintDebug("Don't try to send in combat");
-        return;
-    end
     for key,buff in pairs(IzCBuffs) do
         if IzC_WB.Sender:ShouldSendBuff(buff) == true then
             IzC_WB:PrintDebug("Trying to send buff: "..key);
@@ -37,7 +31,6 @@ end
 
 function IzC_WB.Sender:ShouldSendBuff(buff)
     if buff.Time < time() then
-        -- IzC_WB:PrintDebug("Don't send too old buffs")
         return false;
     end
 
@@ -127,17 +120,16 @@ function IzC_WB.Sender:OnCommReceived(prefix, payload, distribution, sender)
         isAlliance = true;
     end
 
-    IzC_WB:AddBuff(data.B, isAlliance, data.T, "Imported From: "..sender)
-
-    -- for key,buff in pairs(data) do
-        -- print(key, buff)
-    -- end
+    IzC_WB:AddBuff(data.B, isAlliance, data.T, sender)
 end
 
 function IzC_WB.Sender:OnEnable()
-    if IzCWorldBuffs_SavedVars.IzC_WB_ReceiveBuffs ~= true then
-        return;
+    IzC_WB.Sender:TryRegisterCom()
+end
+
+function IzC_WB.Sender:TryRegisterCom()
+    if IzCWorldBuffs_SavedVars.IzC_WB_ReceiveBuffs == true and IzC_WB.ReceiveRegistered == false then
+        self:RegisterComm(IzC_WB.AddonMessagePrefix)
+        IzC_WB.ReceiveRegistered = true;
     end
-    
-    self:RegisterComm(IzC_WB.AddonMessagePrefix)
 end

@@ -1,27 +1,23 @@
 -- Globals Section
 local addonName, L = ...;
 
-local IzC_WB_BuffTypes = {
-    [1] = "Onyxia",
-    [2] = "Rend"
-}
-
 -- Create a frame to handle events
 IzC_WB = CreateFrame("Frame", "IzCAutoConsumables_IzC_WB");
 IzC_WB:SetScript("OnEvent", function(self, event, ...) IzC_WB:EventHandler(event, ...); end);
 
 -- register events
 IzC_WB:RegisterEvent("ADDON_LOADED");
-IzC_WB:RegisterEvent("PLAYER_TARGET_CHANGED")
 IzC_WB:RegisterEvent("PLAYER_LOGOUT")
-
+IzC_WB:RegisterEvent("PLAYER_REGEN_ENABLED");
 
 IzCWorldBuffs_CharSettings = {}
 IzCWorldBuffs_SavedVars = {}
 IzCBuffs = {}
+IzC_WB.OnUpdateThrottleWaiter = 7
+IzC_WB.OnUpdateThrottleTime = time() + IzC_WB.OnUpdateThrottleWaiter
 
 function IzC_WB:ClearOldBuffs()
-    local oldestBuffTime = IzC_WB:GetDateShiftedByDay(-2);
+    local oldestBuffTime = IzC_WB:GetDateShiftedByDay(-1);
     for key,buff in pairs(IzCBuffs) do
         if buff.Time < oldestBuffTime then
             IzCBuffs[key] = nil;
@@ -54,14 +50,15 @@ function IzC_WB:EventHandler(event, arg1, ...)
             IzC_WB:TryUnregisterEvent("ADDON_LOADED");
             IzC_WB:CreateSettings();
             IzC_WB:RegisterMiniMap();
-
+            IzC_WB:RegisterOnUpdate()
             return;
         end
     elseif (event == "PLAYER_LOGOUT") then
         IzC_WB:ClearOldBuffs();
         return;
-    else
-        IzC_WB.Sender:TrySend()
+    elseif (event == "PLAYER_REGEN_ENABLED") then
+        IzC_WB.OnUpdateThrottleTime = time() + IzC_WB.OnUpdateThrottleWaiter
+        IzC_WB:RegisterOnUpdate()
     end
 end
 
@@ -83,6 +80,37 @@ function IzC_WB:TryUnregisterEvent(event)
     end
 end
 
+function IzC_WB:RegisterOnUpdate()
+    if not IzC_WB:GetScript("OnUpdate") then
+        IzC_WB:SetScript("OnUpdate", function(self, event, ...) IzC_WB:OnUpdate(event, ...); end);
+    end
+end
+
+function IzC_WB:UnRegisterOnUpdate()
+    if IzC_WB:GetScript("OnUpdate") then
+        IzC_WB:SetScript("OnUpdate", nil);
+    end
+end
+
+----------------------
+-- OnUpdate Handler --
+----------------------
+function IzC_WB:OnUpdate()
+    if (IzC_WB.OnUpdateThrottleTime > time()) then
+        return;
+    end
+
+    IzC_WB.OnUpdateThrottleTime = time() + IzC_WB.OnUpdateThrottleWaiter
+
+    if (UnitAffectingCombat("player")) then
+        IzC_WB:UnRegisterOnUpdate();
+        return;
+    end
+
+    if IzCWorldBuffs_SavedVars.IzC_WB_SendBuffs == true then
+        IzC_WB.Sender:TrySend();
+    end
+end
 
 
 
@@ -119,7 +147,7 @@ function IzC_WB:CreateSettings()
             IzC_WB:PrintDebug("Setting "..variable.." changed to: "..tostring(value));
             IzCWorldBuffs_SavedVars[variable] = value;
             if (variable == "IzC_WB_ReceiveBuffs") then
-                IzC_WB.Sender:OnEnable()
+                IzC_WB.Sender:TryRegisterCom()
             end
         end
 
