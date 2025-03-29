@@ -9,11 +9,15 @@
 ## X-Curse-Project-ID: 1229492
 
 IzCWorldBuffs.lua
+
 Parser.lua
-InputFrame.lua
 Communications.lua
 MinimapButton.lua
 PreAnnouncer.lua
+
+AddonFrame.lua
+InputFrame.lua
+
 Libs\LibDataBroker-1.1.lua
 Libs\LibDBIcon-1.0.lua
 Libs\AceAddon-3.0.lua

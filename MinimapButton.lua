@@ -15,10 +15,10 @@ function IzC_WB:RegisterMiniMap()
             OnClick = function (self, button)
         
                 if button == "LeftButton" then 
-                    if IzC_WB.InputFrame:IsShown() then
-                        IzC_WB.InputFrame:Hide()
+                    if IzC_WB.AddonFrame:IsShown() then
+                        IzC_WB.AddonFrame:Hide();
                     else
-                        IzC_WB.InputFrame:Show()
+                        IzC_WB.AddonFrame:Show()
                     end
                 elseif button == "RightButton" then
                     Settings.OpenToCategory(IzC_WB.Category)

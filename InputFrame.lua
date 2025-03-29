@@ -1,69 +1,64 @@
 -- Globals Section
 local addonName, L = ...;
 
-IzC_WB.InputFrame = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
-IzC_WB.InputFrame:SetSize(500, 400)
-IzC_WB.InputFrame:SetPoint("CENTER")
-IzC_WB.InputFrame:SetBackdrop({
-    bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-    edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-    tile = true, tileSize = 32, edgeSize = 32,
-    insets = { left = 8, right = 8, top = 8, bottom = 8 }
-})
-IzC_WB.InputFrame:SetMovable(true)
-IzC_WB.InputFrame:EnableMouse(true)
-IzC_WB.InputFrame:RegisterForDrag("LeftButton")
-IzC_WB.InputFrame:SetScript("OnDragStart", IzC_WB.InputFrame.StartMoving)
-IzC_WB.InputFrame:SetScript("OnDragStop", IzC_WB.InputFrame.StopMovingOrSizing)
+IzC_WB.InputUI = {};
+-- -- Input Tab Button
+IzC_WB.InputUI.TabButton = CreateFrame("Button", "IzC_WB.AddonFrameTab1", IzC_WB.AddonFrame, "CharacterFrameTabButtonTemplate")
+IzC_WB.InputUI.TabButton:SetPoint("BOTTOMLEFT", 5, -19)
+IzC_WB.InputUI.TabButton:SetSize(120, 25)
+IzC_WB.InputUI.TabButton:SetText("Parse Input")
+IzC_WB.InputUI.TabButton:SetScript("OnClick", function()
+    -- PanelTemplates_SetTab(IzC_WB.AddonFrame, 1);
+    IzC_WB.BuffsUI.Frame:Hide();
+    IzC_WB.InputUI.Frame:Show();
+end)
 
--- Title
-local title = IzC_WB.InputFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-title:SetPoint("TOP", 0, -16)
-title:SetText("Paste your input")
+IzC_WB.InputUI.Frame = CreateFrame("Frame", "TabPage1", IzC_WB.AddonFrame)
+IzC_WB.InputUI.Frame:SetSize(500, 400)
+IzC_WB.InputUI.Frame:SetPoint("CENTER")
+local inputUITitle = IzC_WB.InputUI.Frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+inputUITitle:SetPoint("TOP", 0, -16)
+inputUITitle:SetText("Paste your input")
 
 -- ScrollFrame
-local scrollFrame = CreateFrame("ScrollFrame", nil, IzC_WB.InputFrame, "UIPanelScrollFrameTemplate")
-scrollFrame:SetPoint("TOPLEFT", 16, -50)
-scrollFrame:SetPoint("BOTTOMRIGHT", -30, 50)
-scrollFrame:SetHeight(350)
+local inputUIScrollFrame = CreateFrame("ScrollFrame", nil, IzC_WB.InputUI.Frame, "UIPanelScrollFrameTemplate")
+inputUIScrollFrame:SetPoint("TOPLEFT", 16, -50)
+inputUIScrollFrame:SetPoint("BOTTOMRIGHT", -30, 50)
+inputUIScrollFrame:SetHeight(360)
 
 -- EditBox inside ScrollFrame
-local IzC_WB_editBox = CreateFrame("EditBox", nil, scrollFrame, "BackdropTemplate")
-IzC_WB_editBox:SetBackdrop({
+local inputUIEditBox = CreateFrame("EditBox", nil, inputUIScrollFrame, "BackdropTemplate")
+inputUIEditBox:SetBackdrop({
     bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
     edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
     tile = true, tileSize = 16, edgeSize = 16,
     insets = { left = 4, right = 4, top = 4, bottom = 4 }
 })
-IzC_WB_editBox:SetBackdropColor(0, 0, 0, 0.8)
-IzC_WB_editBox:SetMultiLine(true)
-IzC_WB_editBox:SetFontObject(ChatFontNormal)
-IzC_WB_editBox:SetWidth(440)
-IzC_WB_editBox:SetAutoFocus(true)
-IzC_WB_editBox:SetScript("OnEscapePressed", function() IzC_WB_editBox:ClearFocus();IzC_WB_editBox:SetText("");IzC_WB.InputFrame:Hide(); end)
-IzC_WB_editBox:SetScript("OnEnterPressed", function() IzC_WB_editBox:Insert("\n") end)
-IzC_WB_editBox:SetPoint("TOPLEFT")
-IzC_WB_editBox:SetPoint("TOPRIGHT")
-IzC_WB_editBox:SetHeight(300)
+inputUIEditBox:SetBackdropColor(0, 0, 0, 0.8)
+inputUIEditBox:SetMultiLine(true)
+inputUIEditBox:SetFontObject(ChatFontNormal)
+inputUIEditBox:SetWidth(440)
+inputUIEditBox:SetAutoFocus(true)
+inputUIEditBox:SetScript("OnEscapePressed", function() inputUIEditBox:ClearFocus();inputUIEditBox:SetText("");IzC_WB.AddonFrame:Hide(); end)
+inputUIEditBox:SetScript("OnEnterPressed", function() inputUIEditBox:Insert("\n") end)
+inputUIEditBox:SetPoint("TOPLEFT")
+inputUIEditBox:SetPoint("TOPRIGHT")
+inputUIEditBox:SetHeight(300)
 
-scrollFrame:SetScrollChild(IzC_WB_editBox)
-
--- Close Button
-local closeButton = CreateFrame("Button", nil, IzC_WB.InputFrame, "UIPanelCloseButton")
-closeButton:SetPoint("TOPRIGHT", -6, -6)
+inputUIScrollFrame:SetScrollChild(inputUIEditBox)
 
 -- Parse Button
-local parseButton = CreateFrame("Button", nil, IzC_WB.InputFrame, "GameMenuButtonTemplate")
-parseButton:SetPoint("BOTTOM", 0, 10)
-parseButton:SetSize(120, 25)
-parseButton:SetText("Parse Input")
-parseButton:SetScript("OnClick", function()
-    local text = IzC_WB_editBox:GetText()
+local inputUIParseButton = CreateFrame("Button", nil, IzC_WB.InputUI.Frame, "GameMenuButtonTemplate")
+inputUIParseButton:SetPoint("BOTTOM", 0, 10)
+inputUIParseButton:SetSize(120, 25)
+inputUIParseButton:SetText("Parse Input")
+inputUIParseButton:SetScript("OnClick", function()
+    local text = inputUIEditBox:GetText()
     if text and text ~= "" then
         IzC_WB:ProcessRawInput(text);
     end
-    IzC_WB_editBox:SetText("")
-    IzC_WB.InputFrame:Hide();
+    inputUIEditBox:SetText("")
+    IzC_WB.AddonFrame:Hide();
 end)
 
-IzC_WB.InputFrame:Hide()
+IzC_WB.InputUI.Frame:Hide();

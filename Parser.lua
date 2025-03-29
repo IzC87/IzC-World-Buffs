@@ -19,6 +19,11 @@ function IzC_WB:ParsePost(post)
         if (isAlliance == nil) then
             isAlliance = IzC_WB:IsAlliance(line, nil)
         end
+        
+        if (getDate == false and line:find("%[%d%d?:%d%d")) then
+            getDate = true;
+        end
+
         -- PreAdd BuffDate, this is to cover cases where the post is made with the @BuffDate last.
         if (getDate == true and not buffDate) then
             buffDate = IzC_WB:GetDate(line, nil)
@@ -126,8 +131,8 @@ function IzC_WB:CheckLineForTimeAndAddToTable(line, buffTag, isAlliance, buffDat
         return result;
     end
 
-    -- Match times like 19.40
-    for timeStr in line:gmatch("(%d%d[%.:]%d%d)") do
+    -- Match times like 19.40, 19:40
+    for _, timeStr in line:gmatch("([^%[])(%d%d[%.:]%d%d)") do
         local s, e = line:find(timeStr, 1, true)
         local nextChar = line:sub(e + 1, e + 5)
 
@@ -242,7 +247,12 @@ function IzC_WB:SplitIntoPosts(raw)
     
     for line in raw:gmatch("[^\r\n]+") do
         if line:match("^<.->.-%s+—%s+") then
-            -- New post starts
+            if #currentPost > 0 then
+                table.insert(posts, table.concat(currentPost, "\n"))
+                currentPost = {}
+            end
+        end
+        if line:match("^%[%d%d?:%d%d [ap]%.? m%.?%]%s*<.->") then
             if #currentPost > 0 then
                 table.insert(posts, table.concat(currentPost, "\n"))
                 currentPost = {}

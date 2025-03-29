@@ -47,7 +47,6 @@ function IzC_WB:EventHandler(event, arg1, ...)
             IzCWorldBuffs_SavedVars = setmetatable(IzCWorldBuffs_SavedVars or {}, { __index = IzCWorldBuffs_Defaults })
             IzCBuffs = setmetatable(IzCBuffs or {}, { __index = {} })
 
-
             IzC_WB:TryUnregisterEvent("ADDON_LOADED");
             IzC_WB:CreateSettings();
             IzC_WB:RegisterMiniMap();
