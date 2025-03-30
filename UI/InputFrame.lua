@@ -4,12 +4,13 @@ local addonName, L = ...;
 IzC_WB.InputUI = {};
 -- -- Input Tab Button
 IzC_WB.InputUI.TabButton = CreateFrame("Button", "IzC_WB.AddonFrameTab1", IzC_WB.AddonFrame, "CharacterFrameTabButtonTemplate")
-IzC_WB.InputUI.TabButton:SetPoint("BOTTOMLEFT", 5, -19)
+IzC_WB.InputUI.TabButton:SetPoint("BOTTOMRIGHT", 5, -19)
 IzC_WB.InputUI.TabButton:SetSize(120, 25)
 IzC_WB.InputUI.TabButton:SetText("Parse Input")
 IzC_WB.InputUI.TabButton:SetScript("OnClick", function()
-    -- PanelTemplates_SetTab(IzC_WB.AddonFrame, 1);
     IzC_WB.BuffsUI.Frame:Hide();
+    IzC_WB.AddBuffsUI.Frame:Hide();
+    IzC_WB.ExportBuffsUI.Frame:Hide();
     IzC_WB.InputUI.Frame:Show();
 end)
 

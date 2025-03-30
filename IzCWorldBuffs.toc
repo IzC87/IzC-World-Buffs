@@ -15,8 +15,11 @@ Communications.lua
 MinimapButton.lua
 PreAnnouncer.lua
 
-AddonFrame.lua
-InputFrame.lua
+UI\AddonFrame.lua
+UI\InputFrame.lua
+UI\HandleBuffsFrame.lua
+UI\AddBuffFrame.lua
+UI\ExportBuffsFrame.lua
 
 Libs\LibDataBroker-1.1.lua
 Libs\LibDBIcon-1.0.lua
