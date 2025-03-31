@@ -76,7 +76,7 @@ function IzC_WB.Sender:SendBuff(buff)
         table.insert(sendTo, "RAID")
     end
 
-    IzC_WB.LastMessageThrottleTime = time() + IzC_WB.MessageThrottleTime
+    IzC_WB.LastMessageThrottleTime = time() + (IzC_WB.MessageThrottleTime * 2) 
 
     if (#sendTo <= 0) then
         IzC_WB:PrintDebug("No channels found");
@@ -120,8 +120,9 @@ function IzC_WB.Sender:OnCommReceived(prefix, payload, distribution, sender)
 
     IzC_WB:PrintDebug(prefix.." - "..payload.." - "..distribution.." - "..sender)
 
-    if (not data.T or not data.A or not data.B) then
+    if (data.T == nil or data.A == nil or data.B == nil) then
         IzC_WB:PrintDebug(sender.." is using an old version. Disregarding msg")
+        return;
     end
 
     local isAlliance = false;

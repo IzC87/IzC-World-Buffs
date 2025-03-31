@@ -50,18 +50,12 @@ function IzC_WB:RegisterMiniMap()
                             factionColor = "|c0000D6DE"
                         end
                         
-                        local sendBuffCheckerString = "";
-                        if (IzCWorldBuffs_SavedVars.IzC_WB_Tooltip_Debug == true) then
-                            sendBuffCheckerString = " "..tostring(buff.SendBuffChecker)
-                        end
-
-                        tooltip:AddLine(factionColor..buff.Buff.." - "..buff.Faction.." - "..dateString..sendBuffCheckerString);
+                        tooltip:AddLine(factionColor..buff.Buff.." - "..buff.Faction.." - "..dateString);
                     end
                 end
                 
                 if (IzCWorldBuffs_SavedVars.IzC_WB_Tooltip_Debug == true) then
                     tooltip:AddLine("------------------------------");
-                    tooltip:AddLine("SendBuffChecker: "..tostring(IzC_WB.SendBuffChecker));
 
                     local minutesElapsedSinceStart = ((time() - IzC_WB.StartTime) / 60);
                     if (minutesElapsedSinceStart <= 0) then
@@ -70,14 +64,17 @@ function IzC_WB:RegisterMiniMap()
 
                     tooltip:AddLine("MessagesSent: "..IzC_WB.MessagesSent);
                     if (IzC_WB.MessagesSent > 0) then
-                        tooltip:AddLine("MessagesSent / Minute: "..tostring(IzC_WB.MessagesSent / minutesElapsedSinceStart));
-                        tooltip:AddLine("------------------------------");
+                        local sentPerMinute = math.floor((IzC_WB.MessagesSent / minutesElapsedSinceStart) * 10) / 10
+                        tooltip:AddLine("MessagesSent / Minute: "..tostring(sentPerMinute));
                     end
 
-                    tooltip:AddLine("MessagesReceived: "..IzC_WB.MessagesReceived);
                     if (IzC_WB.MessagesReceived > 0) then
-                        tooltip:AddLine("MessagesReceived / Minute: "..tostring(IzC_WB.MessagesReceived / minutesElapsedSinceStart));
-                        tooltip:AddLine("------------------------------");
+                        if (IzC_WB.MessagesSent > 0) then
+                            tooltip:AddLine("------------------------------");
+                        end
+                        tooltip:AddLine("MessagesReceived: "..IzC_WB.MessagesReceived);
+                        local receivedPerMinute = math.floor((IzC_WB.MessagesReceived / minutesElapsedSinceStart) * 10) / 10
+                        tooltip:AddLine("MessagesReceived / Minute: "..tostring(receivedPerMinute));
                     end
                 end
             end,

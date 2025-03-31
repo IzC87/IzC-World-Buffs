@@ -177,9 +177,9 @@ function IzC_WB:TryAddBuff(buffTag, isAlliance, buffDate, buffTime, rawPost)
 end
 
 function IzC_WB:AddBuff(buffTag, isAlliance, timeStamp, rawPost)
-    if timeStamp < IzC_WB:GetDateShiftedByDay(-3) then
+    if timeStamp < IzC_WB:GetDateShiftedByDay(-2) then
         IzC_WB:PrintDebug(buffTag.." too old:")
-        IzC_WB:PrintDebug("rawPost")
+        IzC_WB:PrintDebug(rawPost)
         return nil;
     end
 
