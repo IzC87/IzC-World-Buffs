@@ -45,6 +45,7 @@ function IzC_WB:EventHandler(event, arg1, ...)
 
             IzCWorldBuffs_CharSettings = setmetatable(IzCWorldBuffs_CharSettings or {}, { __index = IzCWorldBuffs_CharSettings_Defaults })
             IzCWorldBuffs_SavedVars = setmetatable(IzCWorldBuffs_SavedVars or {}, { __index = IzCWorldBuffs_Defaults })
+            IzCWorldBuffs_Minimap = setmetatable(IzCWorldBuffs_Minimap or {}, { __index = IzCWorldBuffs_Minimap_Defaults })
             IzCBuffs = setmetatable(IzCBuffs or {}, { __index = {} })
 
             IzC_WB:TryUnregisterEvent("ADDON_LOADED");
@@ -223,6 +224,9 @@ IzCWorldBuffs_Defaults = {
     ["Buffs"] = {},
     ["Minimap"] = {},
     ["ShowTooltip"] = true
+}
+
+IzCWorldBuffs_Minimap_Defaults = {
 }
 
 IzCWorldBuffs_CharSettings_Defaults = {

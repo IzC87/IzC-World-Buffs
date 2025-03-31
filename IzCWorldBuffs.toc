@@ -3,7 +3,7 @@
 ## Title: IzCWorldBuffs
 ## Author: IzC
 ## Version: @project-version@
-## SavedVariables: IzCWorldBuffs_SavedVars, IzCBuffs
+## SavedVariables: IzCWorldBuffs_SavedVars, IzCBuffs, IzCWorldBuffs_Minimap
 ## SavedVariablesPerCharacter: IzCWorldBuffs_CharSettings
 
 ## X-Curse-Project-ID: 1229492

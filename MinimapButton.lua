@@ -84,10 +84,10 @@ function IzC_WB:RegisterMiniMap()
         })
         
         if (databroker and not IzC_WB_Button:IsRegistered ("IzCWorldBuffs")) then
-            IzC_WB_Button:Register("IzCWorldBuffs", databroker, IzCWorldBuffs_SavedVars.Minimap)
+            IzC_WB_Button:Register("IzCWorldBuffs", databroker, IzCWorldBuffs_Minimap)
         end
 
-        IzC_WB:ShowHideMiniMap(IzCWorldBuffs_SavedVars.Minimap.hide);
+        IzC_WB:ShowHideMiniMap(IzCWorldBuffs_Minimap.hide);
     end
 end
 
@@ -113,7 +113,7 @@ function IzC_WB:ShowBuff(buff)
 end
 
 function IzC_WB:ShowHideMiniMap(shouldHide)
-    IzCWorldBuffs_SavedVars.Minimap.hide = shouldHide;
+    IzCWorldBuffs_Minimap.hide = shouldHide;
     if shouldHide then
         IzC_WB_Button:Hide("IzCWorldBuffs");
     else
@@ -122,5 +122,5 @@ function IzC_WB:ShowHideMiniMap(shouldHide)
 end
 
 function IzC_WB:ShowHideTooltip(shouldHide)
-    IzCWorldBuffs_SavedVars.ShowTooltip = shouldHide;
+    IzCWorldBuffs_Minimap.ShowTooltip = shouldHide;
 end
