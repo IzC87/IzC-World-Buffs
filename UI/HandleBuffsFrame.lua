@@ -22,3 +22,21 @@ buffsUITitle:SetPoint("TOP", 0, -16)
 buffsUITitle:SetText("Buffs")
 
 IzC_WB.BuffsUI.Frame:Hide();
+IzC_WB.BuffsUI.Frame:SetScript("OnShow", function()
+    IzC_WB.BuffsUI:BuildBuffInterface()
+end)
+
+IzC_WB.BuffsUI.Buffs = {}
+
+function IzC_WB.BuffsUI:BuildBuffInterface()
+    local buffs = IzC_WB:SortBuffsByTime();
+    -- local nextDay = time( { year = tonumber(date("%Y")), month = tonumber(date("%m")), day = tonumber(date("%d")) }) + 24 * 60 * 60;
+
+    local index = 1;
+    for _,buff in ipairs(buffs) do
+        if (IzC_WB:ShowBuff(buff) == true) then
+            
+        end
+        index = index + 1;
+    end
+end

@@ -14,18 +14,17 @@ IzC_WB.ExportBuffsUI.TabButton:SetScript("OnClick", function()
     IzC_WB.ExportBuffsUI.Frame:Show();
 end)
 
-IzC_WB.AddonFrame:SetScript("OnShow", function()
-    IzC_WB.ExportBuffsUI.EditBox:UpdateText()
-end)
-
 IzC_WB.ExportBuffsUI.Frame = CreateFrame("Frame", "TabPage4", IzC_WB.AddonFrame)
 IzC_WB.ExportBuffsUI.Frame:SetSize(500, 400)
 IzC_WB.ExportBuffsUI.Frame:SetPoint("CENTER")
 local exportBuffsUITitle = IzC_WB.ExportBuffsUI.Frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
 exportBuffsUITitle:SetPoint("TOP", 0, -16)
-exportBuffsUITitle:SetText("Export Buff")
+exportBuffsUITitle:SetText("Export Buffs")
 
 IzC_WB.ExportBuffsUI.Frame:Hide();
+IzC_WB.ExportBuffsUI.Frame:SetScript("OnShow", function()
+    IzC_WB.ExportBuffsUI.EditBox:UpdateText()
+end)
 
 
 -- ScrollFrame
@@ -64,12 +63,11 @@ exportUIParseButton:SetScript("OnClick", function()
     IzC_WB.ExportBuffsUI.EditBox:UpdateText()
 end)
 
-
 function IzC_WB.ExportBuffsUI.EditBox:UpdateText()
-    IzC_WB.ExportBuffsUI.EditBox:SetText(IzC_WB.ExportBuffsUI.EditBox:GetText())
+    IzC_WB.ExportBuffsUI.EditBox:SetText(IzC_WB.ExportBuffsUI.EditBox:GetTextForBuffs())
 end
 
-function IzC_WB.ExportBuffsUI.EditBox:GetText()
+function IzC_WB.ExportBuffsUI.EditBox:GetTextForBuffs()
 
     local content = "";
 
