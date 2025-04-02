@@ -32,16 +32,22 @@ function IzC_WB:RegisterMiniMap()
                 local buffs = IzC_WB:SortBuffsByTime();
                 local nextDay = time( { year = tonumber(date("%Y")), month = tonumber(date("%m")), day = tonumber(date("%d")) }) + 24 * 60 * 60;
                 local addLine = true;
+                local firstBuff = true;
 
                 for _,buff in ipairs(buffs) do
                     -- Don't show buffs that have passed
                     if (IzC_WB:ShowBuff(buff) == true) then
+                        if firstBuff and nextDay and buff.Time > nextDay then
+                            addLine = false;
+                            firstBuff = false;
+                        end
+
                         local dateString = date("%H:%M", buff.Time)
                         if nextDay and buff.Time > nextDay then
                             dateString = date("%A %d - %H:%M", buff.Time)
                             if addLine then
                                 tooltip:AddLine("------------------------------");
-                                addLine = nil;
+                                addLine = false;
                             end
                         end
 
@@ -51,6 +57,7 @@ function IzC_WB:RegisterMiniMap()
                         end
                         
                         tooltip:AddLine(factionColor..buff.Buff.." - "..buff.Faction.." - "..dateString);
+                        firstBuff = false;
                     end
                 end
                 

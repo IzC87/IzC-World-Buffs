@@ -81,8 +81,13 @@ function IzC_WB:ParsePost(post)
 end
 
 function IzC_WB:GetDate(line, lastDate)
-    local day, month, year = line:match("(%d%d?)[%./%-](%d%d?)[%./%-](%d%d%d%d)")
+    local day, month, year = line:match("(%d%d?)[%./%-](%d%d?)[%./%-](%d%d%d?%d?)")
     if day and month and year then
+        year = tonumber(year);
+        if (year < 2000) then
+            year = year + 2000;
+        end
+        
         return { year=tonumber(year), month=tonumber(month), day=tonumber(day) }
     else
         day, month = line:match(" (%d%d?)[%./%-](%d%d?) ")
