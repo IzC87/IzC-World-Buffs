@@ -123,6 +123,8 @@ end
 function IzC_WB:CheckLineForTimeAndAddToTable(line, buffTag, isAlliance, buffDate, rawPost)
     local result = false;
 
+    line = " "..line;
+
     if not buffTag then
         IzC_WB:PrintDebug("No BuffTag Found: \n"..rawPost);
         return result;
