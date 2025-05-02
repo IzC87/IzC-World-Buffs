@@ -91,6 +91,8 @@ function IzC_WB.Sender:SendBuff(buff)
     };
     if (buff.Alliance == true) then
         buffToSend.A = 1
+    elseif buff.Alliance == nil then
+        buffToSend.A = 2
     else
         buffToSend.A = 0
     end
@@ -128,6 +130,8 @@ function IzC_WB.Sender:OnCommReceived(prefix, payload, distribution, sender)
     local isAlliance = false;
     if (data.A == 1) then
         isAlliance = true;
+    elseif (data.A == 2) then
+        isAlliance = nil;
     end
 
     IzC_WB:AddBuff(data.B, isAlliance, data.T, sender)

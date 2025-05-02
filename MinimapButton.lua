@@ -54,8 +54,10 @@ function IzC_WB:RegisterMiniMap()
                         local factionColor = "|cDEFF0006"
                         if buff.Alliance == true then
                             factionColor = "|c0000D6DE"
+                        elseif buff.Alliance == nil then
+                            factionColor = "|c00DBB818"
                         end
-                        
+
                         tooltip:AddLine(factionColor..buff.Buff.." - "..buff.Faction.." - "..dateString);
                         firstBuff = false;
                     end

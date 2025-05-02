@@ -129,36 +129,32 @@ function IzC_WB:CheckLineForTimeAndAddToTable(line, buffTag, isAlliance, buffDat
         IzC_WB:PrintDebug("No BuffTag Found: \n"..rawPost);
         return result;
     end
-    if isAlliance == nil then
-        IzC_WB:PrintDebug("No Faction Found: \n"..rawPost);
-        return result;
-    end
     if not buffDate then
         IzC_WB:PrintDebug("No BuffDate Found: \n"..rawPost);
         return result;
     end
 
     -- Match times like 19.40, 19:40
-    for _, timeStr in line:gmatch("([^%[])(%d%d[%.:]%d%d)") do
+    for _, timeStr in line:gmatch("([^%[])(%d%d?[%.:]%d%d)") do
         local s, e = line:find(timeStr, 1, true)
         local nextChar = line:sub(e + 1, e + 5)
 
         if nextChar == "" or not nextChar:match("^[%.:]%d%d%d%d$") then
             timeStr = timeStr:gsub("%.", ":")
             local hour, minute = strsplit(":", timeStr, 2)
-            result = IzC_WB:TryAddBuff(buffTag, isAlliance, buffDate, { hour = hour, minute = minute}, rawPost)
+            result = IzC_WB:TryAddBuff(buffTag, isAlliance, buffDate, { hour = hour, minute = minute}, line)
         end
     end
     for pre, timeStr in line:gmatch("([^%d/%.%-])(%d%d%d%d)%f[%D]") do
         if tonumber(timeStr) < 2400 then
-            result = IzC_WB:TryAddBuff(buffTag, isAlliance, buffDate, { hour = timeStr:sub(1, 2), minute = timeStr:sub(3, 4)}, rawPost)
+            result = IzC_WB:TryAddBuff(buffTag, isAlliance, buffDate, { hour = timeStr:sub(1, 2), minute = timeStr:sub(3, 4)}, line)
         end
     end
 
     return result;
 end
 
-function IzC_WB:TryAddBuff(buffTag, isAlliance, buffDate, buffTime, rawPost)
+function IzC_WB:TryAddBuff(buffTag, isAlliance, buffDate, buffTime, line)
     if (not buffDate.year or not buffDate.month or not buffDate.day) then
         IzC_WB:PrintDebug("Date is wrong!: \n"..tostring(buffDate.year).."/"..tostring(buffDate.month).."/"..tostring(buffDate.day));
         -- print("Date is wrong!: \n"..tostring(buffDate.year).."/"..tostring(buffDate.month).."/"..tostring(buffDate.day));
@@ -174,7 +170,14 @@ function IzC_WB:TryAddBuff(buffTag, isAlliance, buffDate, buffTime, rawPost)
             min = tonumber(buffTime.minute),
         })
 
-    local buffAdded = IzC_WB:AddBuff(buffTag, isAlliance, timeStamp, rawPost);
+    if (buffTag == "Zandalar") and isAlliance ~= nil then
+        local lineIsAlliance = IzC_WB:IsAlliance(line, nil)
+        if (lineIsAlliance == nil) then
+            isAlliance = nil;
+        end
+    end
+
+    local buffAdded = IzC_WB:AddBuff(buffTag, isAlliance, timeStamp, line);
 
     if buffAdded then
         IzC_WB.Sender:SendBuff(buffAdded)
@@ -183,16 +186,18 @@ function IzC_WB:TryAddBuff(buffTag, isAlliance, buffDate, buffTime, rawPost)
     return true;
 end
 
-function IzC_WB:AddBuff(buffTag, isAlliance, timeStamp, rawPost)
+function IzC_WB:AddBuff(buffTag, isAlliance, timeStamp, line)
     if timeStamp < IzC_WB:GetDateShiftedByDay(-2) then
         IzC_WB:PrintDebug(buffTag.." too old:")
-        IzC_WB:PrintDebug(rawPost)
+        IzC_WB:PrintDebug(line)
         return nil;
     end
 
     local factionString = "Horde";
     if isAlliance then
         factionString = "Alliance"
+    elseif isAlliance == nil then
+        factionString = "Neutral"
     end
 
     local buffToAdd = {
@@ -201,7 +206,7 @@ function IzC_WB:AddBuff(buffTag, isAlliance, timeStamp, rawPost)
         Faction = factionString,
         Time = timeStamp,
         SendBuffChecker = true,
-        RawPost = rawPost
+        RawPost = line
     }
 
     local key = IzC_WB:GetKeyForBuff(buffToAdd);
